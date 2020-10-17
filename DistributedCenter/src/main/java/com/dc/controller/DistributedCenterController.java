@@ -31,11 +31,7 @@ public class DistributedCenterController {
 			throws Exception {
 
 		DistributedCenterDTO dcDTO = dcService.addDC(distributedCenterDTO);
-		if (!ObjectUtils.isEmpty(dcDTO)) {
-			return ResponseEntity.status(HttpStatus.CREATED).body(dcDTO);
-		} else {
-			throw new Exception("Issue in add New DC");
-		}
+		return ResponseEntity.status(HttpStatus.CREATED).body(dcDTO);
 
 	}
 
