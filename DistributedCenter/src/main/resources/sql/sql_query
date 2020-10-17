@@ -1,0 +1,23 @@
+create table dc (
+       dc_id integer not null,
+        created_by varchar(255),
+        created_ts datetime,
+        last_updated_by varchar(255),
+        last_updated_ts datetime,
+        dc_city varchar(255) not null,
+        dc_number varchar(255) not null,
+        dc_type_id integer,
+        primary key (dc_id), 
+        foreign key(dc_type_id) references dc_type(dc_type_id)
+) 
+
+create table dc_type (
+       dc_type_id integer not null,
+        dc_type_name varchar(255) not null,
+        primary key (dc_type_id)
+    ) 
+
+insert into dc_type values(1,'international');
+insert into dc_type values(2,'regional');
+insert into dc_type values(3,'imports');
+
