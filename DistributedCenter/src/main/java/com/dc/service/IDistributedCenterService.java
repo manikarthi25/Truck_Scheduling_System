@@ -11,7 +11,7 @@ public interface IDistributedCenterService {
 
 	public List<DistributedCenterDTO> getAllDCs();
 
-	public DistributedCenterDTO getDCById(Integer dcId);
+	public DistributedCenterDTO searchDCById(Integer dcId);
 
 	public DistributedCenterDTO deleteDCById(Integer dcId);
 

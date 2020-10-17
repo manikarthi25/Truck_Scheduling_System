@@ -11,7 +11,7 @@ public interface ITruckService {
 
 	public List<TruckDTO> getAllTrucks();
 
-	public TruckDTO getTruckById(Integer trcukId);
+	public TruckDTO searchTruckById(Integer trcukId);
 
 	public TruckDTO deleteTruckById(Integer trcukId);
 

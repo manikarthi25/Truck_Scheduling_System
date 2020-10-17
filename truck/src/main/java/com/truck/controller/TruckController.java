@@ -43,9 +43,9 @@ public class TruckController {
 		}
 	}
 
-	@GetMapping("/get/{truckId}")
-	public ResponseEntity<TruckDTO> getTruckById(@PathVariable("truckId") Integer truckId) {
-		TruckDTO truck = truckService.getTruckById(truckId);
+	@GetMapping("/search/{truckId}")
+	public ResponseEntity<TruckDTO> searchTruckById(@PathVariable("truckId") Integer truckId) {
+		TruckDTO truck = truckService.searchTruckById(truckId);
 		if (!ObjectUtils.isEmpty(truck)) {
 			return ResponseEntity.status(HttpStatus.OK).body(truck);
 		} else {

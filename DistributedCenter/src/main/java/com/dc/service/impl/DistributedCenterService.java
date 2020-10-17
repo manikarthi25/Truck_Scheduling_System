@@ -69,35 +69,9 @@ public class DistributedCenterService implements IDistributedCenterService {
 		return dcList;
 	}
 
-	private Integer getDCTypeId(String dcTypeName) {
-
-		Map<String, Integer> dcTypeMap = new HashMap<>();
-		List<DistributedCenterTypeEO> dcTypeEOList = dcTypeRepo.findAll();
-		for (DistributedCenterTypeEO dcTypeEO : dcTypeEOList) {
-			dcTypeMap.put(dcTypeEO.getDcTypeName(), dcTypeEO.getDcTypeId());
-		}
-		if (dcTypeMap.containsKey(dcTypeName)) {
-			return dcTypeMap.get(dcTypeName);
-		} else {
-			return null;
-		}
-
-	}
-
 	@Override
-	public DistributedCenterDTO getDCById(Integer dcId) {
+	public DistributedCenterDTO searchDCById(Integer dcId) {
 		return getDC(dcRepo.findById(dcId));
-	}
-
-	private DistributedCenterDTO getDC(Optional<DistributedCenterEO> dcOptionalEO) {
-		if (dcOptionalEO.isPresent()) {
-			DistributedCenterEO dcEO = dcOptionalEO.get();
-			Optional<DistributedCenterTypeEO> dcTypeEO = dcTypeRepo
-					.findById(dcEO.getDistributedCenterTypeEO().getDcTypeId());
-			return mapperUtils.mapToDTO(dcEO, dcTypeEO.get());
-		} else {
-			return null;
-		}
 	}
 
 	@Override
@@ -132,6 +106,32 @@ public class DistributedCenterService implements IDistributedCenterService {
 		} catch (Exception ex) {
 			log.info("DistributedCenterService :  updateDC : DC :{} Exception : {}", dcDTO, ex);
 			throw new DistributedCenterException("Excetion in during update DC", ex);
+		}
+
+	}
+
+	private DistributedCenterDTO getDC(Optional<DistributedCenterEO> dcOptionalEO) {
+		if (dcOptionalEO.isPresent()) {
+			DistributedCenterEO dcEO = dcOptionalEO.get();
+			Optional<DistributedCenterTypeEO> dcTypeEO = dcTypeRepo
+					.findById(dcEO.getDistributedCenterTypeEO().getDcTypeId());
+			return mapperUtils.mapToDTO(dcEO, dcTypeEO.get());
+		} else {
+			return null;
+		}
+	}
+
+	private Integer getDCTypeId(String dcTypeName) {
+
+		Map<String, Integer> dcTypeMap = new HashMap<>();
+		List<DistributedCenterTypeEO> dcTypeEOList = dcTypeRepo.findAll();
+		for (DistributedCenterTypeEO dcTypeEO : dcTypeEOList) {
+			dcTypeMap.put(dcTypeEO.getDcTypeName(), dcTypeEO.getDcTypeId());
+		}
+		if (dcTypeMap.containsKey(dcTypeName)) {
+			return dcTypeMap.get(dcTypeName);
+		} else {
+			return null;
 		}
 
 	}

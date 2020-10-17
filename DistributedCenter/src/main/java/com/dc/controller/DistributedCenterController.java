@@ -45,9 +45,9 @@ public class DistributedCenterController {
 		}
 	}
 
-	@GetMapping("/get/{dcId}")
-	public ResponseEntity<DistributedCenterDTO> getDCById(@PathVariable("dcId") Integer dcId) {
-		DistributedCenterDTO dc = dcService.getDCById(dcId);
+	@GetMapping("/search/{dcId}")
+	public ResponseEntity<DistributedCenterDTO> searchDCById(@PathVariable("dcId") Integer dcId) {
+		DistributedCenterDTO dc = dcService.searchDCById(dcId);
 		if (!ObjectUtils.isEmpty(dc)) {
 			return ResponseEntity.status(HttpStatus.OK).body(dc);
 		} else {

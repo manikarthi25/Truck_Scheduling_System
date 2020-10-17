@@ -67,34 +67,9 @@ public class TruckService implements ITruckService {
 		return truckList;
 	}
 
-	private Integer getTruckTypeId(String truckTypeName) {
-
-		Map<String, Integer> truckTypeMap = new HashMap<>();
-		List<TruckTypeEO> truckTypeEOList = truckTypeRepo.findAll();
-		for (TruckTypeEO truckTypeEO : truckTypeEOList) {
-			truckTypeMap.put(truckTypeEO.getTruckTypeName(), truckTypeEO.getTruckTypeId());
-		}
-		if (truckTypeMap.containsKey(truckTypeName)) {
-			return truckTypeMap.get(truckTypeName);
-		} else {
-			return null;
-		}
-
-	}
-
 	@Override
-	public TruckDTO getTruckById(Integer truckId) {
+	public TruckDTO searchTruckById(Integer truckId) {
 		return getTruck(truckRepo.findById(truckId));
-	}
-
-	private TruckDTO getTruck(Optional<TruckEO> truckOptionalEO) {
-		if (truckOptionalEO.isPresent()) {
-			TruckEO truckEO = truckOptionalEO.get();
-			Optional<TruckTypeEO> truckTypeEO = truckTypeRepo.findById(truckEO.getTruckTypeEO().getTruckTypeId());
-			return mapperUtils.mapToDTO(truckEO, truckTypeEO.get());
-		} else {
-			return null;
-		}
 	}
 
 	@Override
@@ -112,6 +87,31 @@ public class TruckService implements ITruckService {
 	public List<TruckDTO> deleteAllTruck() {
 		truckRepo.deleteAll();
 		return getAllTrucks();
+	}
+
+	private Integer getTruckTypeId(String truckTypeName) {
+
+		Map<String, Integer> truckTypeMap = new HashMap<>();
+		List<TruckTypeEO> truckTypeEOList = truckTypeRepo.findAll();
+		for (TruckTypeEO truckTypeEO : truckTypeEOList) {
+			truckTypeMap.put(truckTypeEO.getTruckTypeName(), truckTypeEO.getTruckTypeId());
+		}
+		if (truckTypeMap.containsKey(truckTypeName)) {
+			return truckTypeMap.get(truckTypeName);
+		} else {
+			return null;
+		}
+
+	}
+
+	private TruckDTO getTruck(Optional<TruckEO> truckOptionalEO) {
+		if (truckOptionalEO.isPresent()) {
+			TruckEO truckEO = truckOptionalEO.get();
+			Optional<TruckTypeEO> truckTypeEO = truckTypeRepo.findById(truckEO.getTruckTypeEO().getTruckTypeId());
+			return mapperUtils.mapToDTO(truckEO, truckTypeEO.get());
+		} else {
+			return null;
+		}
 	}
 
 	@Override
