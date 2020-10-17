@@ -14,16 +14,8 @@ public enum DistributedCenterTypeEnum {
 		return dcTypeName;
 	}
 
-	public void setDcTypeName(String dcTypeName) {
-		this.dcTypeName = dcTypeName;
-	}
-
 	public Integer getDcTypeId() {
 		return dcTypeId;
-	}
-
-	public void setDcTypeId(Integer dcTypeId) {
-		this.dcTypeId = dcTypeId;
 	}
 
 	private DistributedCenterTypeEnum(String dcTypeName, Integer dcTypeId) {
