@@ -1,0 +1,24 @@
+create table truck (
+       truck_id integer not null,
+        created_by varchar(255),
+        created_ts datetime,
+        last_updated_by varchar(255),
+        last_updated_ts datetime,
+        truck_name varchar(255) not null,
+        truck_number varchar(255) not null,
+        truck_type_id integer,
+        primary key (truck_id), 
+        foreign key(truck_type_id) references truck_type(truck_type_id)
+) 
+
+create table truck_type (
+       truck_type_id integer not null,
+        truck_type_name varchar(255) not null,
+        primary key (truck_type_id)
+    ) 
+
+insert into truck_type values(1,'straight_truck');
+insert into truck_type values(2,'flat');
+insert into truck_type values(3,'conestoga');
+insert into truck_type values(4,'refrigerated');
+
