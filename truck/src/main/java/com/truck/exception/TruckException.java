@@ -4,6 +4,10 @@ public class TruckException extends Exception {
 
 	private static final long serialVersionUID = 1L;
 
+	public TruckException() {
+		super();
+	}
+
 	public TruckException(String message) {
 		super(message);
 	}

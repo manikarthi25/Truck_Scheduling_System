@@ -22,8 +22,7 @@ public class MapperUtils {
 
 	public TruckEO mapToEO(TruckDTO truckDTO) {
 
-		TruckEO TruckEO = modelMapper.map(truckDTO, TruckEO.class);
-		return TruckEO;
+		return modelMapper.map(truckDTO, TruckEO.class);
 
 	}
 

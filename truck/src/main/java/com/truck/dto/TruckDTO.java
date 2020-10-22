@@ -17,7 +17,7 @@ public class TruckDTO {
 
 	private Integer truckId;
 
-	private String truckNumber;
+	private Integer truckNumber;
 
 	private String truckName;
 

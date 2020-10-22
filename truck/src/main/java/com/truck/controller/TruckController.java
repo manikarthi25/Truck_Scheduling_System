@@ -17,16 +17,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.truck.dto.TruckDTO;
-import com.truck.service.impl.TruckService;
+import com.truck.exception.TruckException;
+import com.truck.service.ITruckService;
 
 @RestController
 @RequestMapping("/truck")
 public class TruckController {
 	@Autowired
-	private TruckService truckService;
+	private ITruckService truckService;
 
 	@PostMapping("/add")
-	public ResponseEntity<TruckDTO> addTruck(@RequestBody TruckDTO truckDTO) throws Exception {
+	public ResponseEntity<TruckDTO> addTruck(@RequestBody TruckDTO truckDTO) throws TruckException {
 
 		TruckDTO truck = truckService.addTruck(truckDTO);
 		return ResponseEntity.status(HttpStatus.CREATED).body(truck);
@@ -54,7 +55,7 @@ public class TruckController {
 	}
 
 	@PutMapping("/update")
-	public ResponseEntity<TruckDTO> updateTruck(@RequestBody TruckDTO truckDTO) throws Exception {
+	public ResponseEntity<TruckDTO> updateTruck(@RequestBody TruckDTO truckDTO) throws TruckException {
 
 		TruckDTO truck = truckService.updateTruck(truckDTO);
 		if (!ObjectUtils.isEmpty(truck)) {
