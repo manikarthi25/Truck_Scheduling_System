@@ -17,7 +17,7 @@ public class DistributedCenterDTO {
 
 	private Integer dcId;
 
-	private String dcNumber;
+	private Integer dcNumber;
 
 	private String dcCity;
 	

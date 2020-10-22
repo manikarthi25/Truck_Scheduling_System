@@ -109,7 +109,7 @@ public class DCSlotService implements IDCSlotService {
 			return mapperUtils.mapToDCSlotDTO(dcSlotEO);
 		} else {
 			return null;
-		}
+		} 
 	}
 
 }

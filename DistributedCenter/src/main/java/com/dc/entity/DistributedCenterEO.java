@@ -32,7 +32,7 @@ public class DistributedCenterEO {
 	private Integer dcId;
 
 	@Column(name = "dc_number", unique = true, nullable = false)
-	private String dcNumber;
+	private Integer dcNumber;
 
 	@Column(name = "dc_city")
 	private String dcCity;
