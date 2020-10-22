@@ -34,6 +34,9 @@ public class DCSlotEO {
 	@Column(name = "dc_time_slot")
 	private String dcTimeSlot;
 
+	@Column(name = "max_trucks")
+	private Integer maxTrucks;
+
 	@Column(name = "created_by")
 	private String createdBy;
 

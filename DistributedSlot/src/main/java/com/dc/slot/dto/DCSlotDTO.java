@@ -18,6 +18,8 @@ public class DCSlotDTO {
 	private Integer dcSlotId;
 
 	private String dcTimeSlot;
+	
+	private Integer maxTrucks;
 
 	private String createdBy;
 
