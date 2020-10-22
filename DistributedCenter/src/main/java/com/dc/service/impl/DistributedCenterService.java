@@ -35,7 +35,6 @@ public class DistributedCenterService implements IDistributedCenterService {
 
 	@Override
 	public DistributedCenterDTO addDC(DistributedCenterDTO dcDTO) throws DistributedCenterException {
-		DistributedCenterDTO distributedCenterDTO = new DistributedCenterDTO();
 		List<DistributedCenterEO> dcEntityList = dcRepo.findByDcNumber(dcDTO.getDcNumber());
 		if (!CollectionUtils.isEmpty(dcEntityList)) {
 			throw new DistributedCenterException("This DC is already available");
@@ -52,8 +51,7 @@ public class DistributedCenterService implements IDistributedCenterService {
 					throw new DistributedCenterException("Check Distributed Center Type");
 				}
 				DistributedCenterEO distributedCenterEO = dcRepo.save(dcRepo.save(dcEO));
-				distributedCenterDTO = mapperUtils.mapToDTO(distributedCenterEO,
-						distributedCenterEO.getDistributedCenterTypeEO());
+				return mapperUtils.mapToDTO(distributedCenterEO, distributedCenterEO.getDistributedCenterTypeEO());
 
 			} catch (Exception ex) {
 				log.info("DistributedCenterService : addDC : DC :{} Exception : {}", dcDTO, ex);
@@ -61,7 +59,6 @@ public class DistributedCenterService implements IDistributedCenterService {
 			}
 
 		}
-		return distributedCenterDTO;
 	}
 
 	@Override
