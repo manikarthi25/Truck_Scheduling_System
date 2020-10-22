@@ -8,7 +8,7 @@ import com.dc.slot.exception.DCSlotException;
 
 public interface IDCSlotService {
 
-	DCSlotDTO addDCSlot(DCSlotDTO dclotDTO) throws DCSlotException;
+	DCSlotDTO addDCSlot(DCSlotDTO dcSlotDTO) throws DCSlotException;
 
 	List<DCSlotDTO> getAllDCSlots();
 
