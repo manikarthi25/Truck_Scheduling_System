@@ -14,7 +14,7 @@ import com.dc.entity.DistributedCenterEO;
 import com.dc.entity.DistributedCenterTypeEO;
 import com.dc.exception.DistributedCenterException;
 import com.dc.helper.MapperUtils;
-import com.dc.repository.DistributedCenterRepo;
+import com.dc.repository.DCSlotRepo;
 import com.dc.repository.DistributedCenterTypeRepo;
 import com.dc.service.IDistributedCenterService;
 
@@ -25,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 public class DistributedCenterService implements IDistributedCenterService {
 
 	@Autowired
-	private DistributedCenterRepo dcRepo;
+	private DCSlotRepo dcRepo;
 
 	@Autowired
 	private DistributedCenterTypeRepo dcTypeRepo;

@@ -1,4 +1,4 @@
-package com.dc.entity;
+package com.dc.slot.entity;
 
 import java.time.LocalDateTime;
 
@@ -7,8 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
@@ -34,7 +32,7 @@ public class DistributedCenterEO {
 	@Column(name = "dc_number", unique = true, nullable = false)
 	private String dcNumber;
 
-	@Column(name = "dc_city")
+	@Column(name = "dc_city", nullable = false)
 	private String dcCity;
 
 	@Column(name = "created_by")
@@ -49,8 +47,6 @@ public class DistributedCenterEO {
 	@Column(name = "last_updated_ts")
 	private LocalDateTime lastUpdatedTS;
 
-	@ManyToOne
-	@JoinColumn(name = "dc_type_id")
-	private DistributedCenterTypeEO distributedCenterTypeEO;
-
+	@Column(name = "dc_type_id")
+	private Integer dcTypeId;
 }

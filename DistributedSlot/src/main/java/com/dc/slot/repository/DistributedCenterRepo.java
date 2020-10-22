@@ -1,11 +1,9 @@
-package com.dc.repository;
+package com.dc.slot.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
-import com.dc.entity.DistributedCenterEO;
+import com.dc.slot.entity.DistributedCenterEO;
 
-@Repository
 public interface DistributedCenterRepo extends JpaRepository<DistributedCenterEO, Integer> {
 
 }

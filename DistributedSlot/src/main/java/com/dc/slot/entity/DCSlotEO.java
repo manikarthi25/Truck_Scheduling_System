@@ -1,4 +1,4 @@
-package com.dc.entity;
+package com.dc.slot.entity;
 
 import java.time.LocalDateTime;
 
@@ -23,19 +23,16 @@ import lombok.ToString;
 @Builder
 @ToString
 @Entity
-@Table(name = "dc")
-public class DistributedCenterEO {
+@Table(name = "dc_slot")
+public class DCSlotEO {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "dc_id")
-	private Integer dcId;
+	@Column(name = "dc_slot_id", unique = true)
+	private Integer dcSlotId;
 
-	@Column(name = "dc_number", unique = true, nullable = false)
-	private String dcNumber;
-
-	@Column(name = "dc_city")
-	private String dcCity;
+	@Column(name = "dc_time_slot")
+	private String dcTimeSlot;
 
 	@Column(name = "created_by")
 	private String createdBy;
@@ -50,7 +47,7 @@ public class DistributedCenterEO {
 	private LocalDateTime lastUpdatedTS;
 
 	@ManyToOne
-	@JoinColumn(name = "dc_type_id")
-	private DistributedCenterTypeEO distributedCenterTypeEO;
+	@JoinColumn(name = "dc_id")
+	private DistributedCenterEO distributedCenterEO;
 
 }
