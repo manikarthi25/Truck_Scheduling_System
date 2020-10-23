@@ -1,0 +1,34 @@
+package com.dc.slot.dto;
+
+import java.time.LocalDateTime;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@ToString
+public class DCSlotDTO {
+
+	private Integer dcSlotId;
+
+	private String dcTimeSlot;
+	
+	private Integer maxTrucks;
+
+	private String createdBy;
+
+	private LocalDateTime createdTS;
+
+	private String lastUpdatedBy;
+
+	private LocalDateTime lastUpdatedTS;
+
+	private DistributedCenterDTO distributedCenterDTO;
+
+}

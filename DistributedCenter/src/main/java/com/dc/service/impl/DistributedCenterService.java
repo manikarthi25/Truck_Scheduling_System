@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import com.dc.dto.DistributedCenterDTO;
 import com.dc.entity.DistributedCenterEO;
@@ -34,27 +35,30 @@ public class DistributedCenterService implements IDistributedCenterService {
 
 	@Override
 	public DistributedCenterDTO addDC(DistributedCenterDTO dcDTO) throws DistributedCenterException {
-		DistributedCenterDTO distributedCenterDTO = new DistributedCenterDTO();
-		try {
-			DistributedCenterEO dcEO = mapperUtils.mapToEO(dcDTO);
-			DistributedCenterTypeEO distributedCenterTypeEO = new DistributedCenterTypeEO();
-			Integer dcTypeId = getDCTypeId(dcDTO.getDistributedCenterTypeDTO().getDcTypeName().toLowerCase());
-			if (null != dcTypeId) {
-				distributedCenterTypeEO.setDcTypeId(dcTypeId);
-				distributedCenterTypeEO.setDcTypeName(dcDTO.getDistributedCenterTypeDTO().getDcTypeName());
-				dcEO.setDistributedCenterTypeEO(distributedCenterTypeEO);
-			} else {
-				throw new DistributedCenterException("Check Distributed Center Type");
-			}
-			DistributedCenterEO distributedCenterEO = dcRepo.save(dcRepo.save(dcEO));
-			distributedCenterDTO = mapperUtils.mapToDTO(distributedCenterEO,
-					distributedCenterEO.getDistributedCenterTypeEO());
+		List<DistributedCenterEO> dcEntityList = dcRepo.findByDcNumber(dcDTO.getDcNumber());
+		if (!CollectionUtils.isEmpty(dcEntityList)) {
+			throw new DistributedCenterException("This DC is already available");
+		} else {
+			try {
+				DistributedCenterEO dcEO = mapperUtils.mapToEO(dcDTO);
+				DistributedCenterTypeEO distributedCenterTypeEO = new DistributedCenterTypeEO();
+				Integer dcTypeId = getDCTypeId(dcDTO.getDistributedCenterTypeDTO().getDcTypeName().toLowerCase());
+				if (null != dcTypeId) {
+					distributedCenterTypeEO.setDcTypeId(dcTypeId);
+					distributedCenterTypeEO.setDcTypeName(dcDTO.getDistributedCenterTypeDTO().getDcTypeName());
+					dcEO.setDistributedCenterTypeEO(distributedCenterTypeEO);
+				} else {
+					throw new DistributedCenterException("Check Distributed Center Type");
+				}
+				DistributedCenterEO distributedCenterEO = dcRepo.save(dcRepo.save(dcEO));
+				return mapperUtils.mapToDTO(distributedCenterEO, distributedCenterEO.getDistributedCenterTypeEO());
 
-		} catch (Exception ex) {
-			log.info("DistributedCenterService : addDC : DC :{} Exception : {}", dcDTO, ex);
-			throw new DistributedCenterException("Excetion in during add new DC", ex);
+			} catch (Exception ex) {
+				log.info("DistributedCenterService : addDC : DC :{} Exception : {}", dcDTO, ex);
+				throw new DistributedCenterException("Excetion in during add new DC", ex);
+			}
+
 		}
-		return distributedCenterDTO;
 	}
 
 	@Override
