@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dc.dto.DistributedCenterDTO;
+import com.dc.exception.DistributedCenterException;
 import com.dc.service.impl.DistributedCenterService;
 
 @RestController
@@ -28,7 +29,7 @@ public class DistributedCenterController {
 
 	@PostMapping("/add")
 	public ResponseEntity<DistributedCenterDTO> addDC(@RequestBody DistributedCenterDTO distributedCenterDTO)
-			throws Exception {
+			throws DistributedCenterException {
 
 		DistributedCenterDTO dcDTO = dcService.addDC(distributedCenterDTO);
 		return ResponseEntity.status(HttpStatus.CREATED).body(dcDTO);
@@ -56,7 +57,7 @@ public class DistributedCenterController {
 	}
 
 	@PutMapping("/update")
-	public ResponseEntity<DistributedCenterDTO> updateDC(@RequestBody DistributedCenterDTO dcDTO) throws Exception {
+	public ResponseEntity<DistributedCenterDTO> updateDC(@RequestBody DistributedCenterDTO dcDTO) throws DistributedCenterException {
 
 		DistributedCenterDTO dc = dcService.updateDC(dcDTO);
 		if (!ObjectUtils.isEmpty(dc)) {
