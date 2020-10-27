@@ -1,15 +1,14 @@
 package com.appointment.service;
 
-import com.appointment.model.Appointment;
+import com.appointment.AppointmentException;
+import com.appointment.dto.AppointmentDTO;
 
 public interface IAppointmentService {
-	
-	Appointment createAppointment (Appointment appointmentModel) throws RuntimeException;
-	
-	public Appointment updateAppointment (Appointment appointmentModel) throws RuntimeException;
-	
-	public void deleteAppointment (Integer appointmentId) throws RuntimeException;
-	
-	public Appointment searchAppointmentDetails (Integer id) throws RuntimeException;
+
+	AppointmentDTO createAppointment(AppointmentDTO appointmentDTO) throws AppointmentException;
+
+	AppointmentDTO searchAppointmentById(Long apptId) throws AppointmentException;
+
+	void deleteAppointmentById(Long apptId) throws AppointmentException;
 
 }

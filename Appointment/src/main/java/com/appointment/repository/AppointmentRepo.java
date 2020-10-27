@@ -10,7 +10,7 @@ import com.appointment.entity.AppointmentEO;
 @Repository
 public interface AppointmentRepo extends JpaRepository<AppointmentEO, Long> {
 	
-	@Query(value = "select count(*) from appointment where slot_id = :dcSlotId", nativeQuery = true)
-	int getCountBySlotId(@Param("dcSlotId") int dcSlotId);
+	@Query(value = "select count(*) from appointment where dc_slot_id = :dcSlotId", nativeQuery = true)
+	int getCountBySlotId(@Param("dcSlotId") Integer dcSlotId);
 
 }
