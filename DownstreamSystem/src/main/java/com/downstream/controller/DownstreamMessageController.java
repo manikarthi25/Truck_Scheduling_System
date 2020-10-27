@@ -18,14 +18,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@RequestMapping("/scheduler")
+@RequestMapping("/downstream")
 @Slf4j
 public class DownstreamMessageController {
 
 	@Autowired
 	private SchedulerEventProducer schedulerEventProducer;
 
-	@PostMapping(value = "/postschedulerevent", produces = { MediaType.APPLICATION_JSON_VALUE,
+	@PostMapping(value = "/post/appointment", produces = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE }, consumes = { MediaType.APPLICATION_JSON_VALUE,
 					MediaType.APPLICATION_XML_VALUE })
 	public ResponseEntity<?> postSchedulerEvent(@RequestBody @Valid DownstreamMessage downstreamMessage)

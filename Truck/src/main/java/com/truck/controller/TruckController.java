@@ -2,6 +2,8 @@ package com.truck.controller;
 
 import java.util.List;
 
+import javax.ws.rs.core.MediaType;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +28,8 @@ public class TruckController {
 	@Autowired
 	private ITruckService truckService;
 
-	@PostMapping("/add")
+	@PostMapping(path = "/add", produces = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON }, consumes = {
+			MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public ResponseEntity<TruckDTO> addTruck(@RequestBody TruckDTO truckDTO) throws TruckException {
 
 		TruckDTO truck = truckService.addTruck(truckDTO);
@@ -34,7 +37,8 @@ public class TruckController {
 
 	}
 
-	@GetMapping("/get/all")
+	@GetMapping(path = "/get/all", produces = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON }, consumes = {
+			MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public ResponseEntity<List<TruckDTO>> getAllTrucks() {
 		List<TruckDTO> truckList = truckService.getAllTrucks();
 		if (!CollectionUtils.isEmpty(truckList)) {
@@ -44,7 +48,8 @@ public class TruckController {
 		}
 	}
 
-	@GetMapping("/search/{truckId}")
+	@GetMapping(path = "/search/{truckId}", produces = { MediaType.APPLICATION_XML,
+			MediaType.APPLICATION_JSON }, consumes = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public ResponseEntity<TruckDTO> searchTruckById(@PathVariable("truckId") Integer truckId) {
 		TruckDTO truck = truckService.searchTruckById(truckId);
 		if (!ObjectUtils.isEmpty(truck)) {
@@ -54,7 +59,8 @@ public class TruckController {
 		}
 	}
 
-	@PutMapping("/update")
+	@PutMapping(path = "/update", produces = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON }, consumes = {
+			MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public ResponseEntity<TruckDTO> updateTruck(@RequestBody TruckDTO truckDTO) throws TruckException {
 
 		TruckDTO truck = truckService.updateTruck(truckDTO);
@@ -66,7 +72,8 @@ public class TruckController {
 
 	}
 
-	@DeleteMapping("/delete/all")
+	@DeleteMapping(path = "/delete/all", produces = { MediaType.APPLICATION_XML,
+			MediaType.APPLICATION_JSON }, consumes = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public ResponseEntity<List<TruckDTO>> deleteAllTruck() {
 		List<TruckDTO> truckList = truckService.deleteAllTruck();
 		if (!CollectionUtils.isEmpty(truckList)) {
@@ -76,7 +83,8 @@ public class TruckController {
 		}
 	}
 
-	@DeleteMapping("/delete/{truckId}")
+	@DeleteMapping(path = "/delete/{truckId}", produces = { MediaType.APPLICATION_XML,
+			MediaType.APPLICATION_JSON }, consumes = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public ResponseEntity<TruckDTO> deleteTruckById(@PathVariable("truckId") Integer truckId) {
 		TruckDTO truck = truckService.deleteTruckById(truckId);
 		if (!ObjectUtils.isEmpty(truck)) {

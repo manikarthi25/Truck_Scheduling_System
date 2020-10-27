@@ -2,6 +2,8 @@ package com.dc.controller;
 
 import java.util.List;
 
+import javax.ws.rs.core.MediaType;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +29,8 @@ public class DistributedCenterController {
 	@Autowired
 	private DistributedCenterService dcService;
 
-	@PostMapping("/add")
+	@PostMapping(path = "/add", produces = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON }, consumes = {
+			MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public ResponseEntity<DistributedCenterDTO> addDC(@RequestBody DistributedCenterDTO distributedCenterDTO)
 			throws DistributedCenterException {
 
@@ -36,7 +39,8 @@ public class DistributedCenterController {
 
 	}
 
-	@GetMapping("/get/all")
+	@GetMapping(path = "/get/all", produces = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON }, consumes = {
+			MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public ResponseEntity<List<DistributedCenterDTO>> getAllDCs() {
 		List<DistributedCenterDTO> dcList = dcService.getAllDCs();
 		if (!CollectionUtils.isEmpty(dcList)) {
@@ -46,7 +50,8 @@ public class DistributedCenterController {
 		}
 	}
 
-	@GetMapping("/search/{dcId}")
+	@GetMapping(path = "/search/{dcId}", produces = { MediaType.APPLICATION_XML,
+			MediaType.APPLICATION_JSON }, consumes = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public ResponseEntity<DistributedCenterDTO> searchDCById(@PathVariable("dcId") Integer dcId) {
 		DistributedCenterDTO dc = dcService.searchDCById(dcId);
 		if (!ObjectUtils.isEmpty(dc)) {
@@ -56,8 +61,10 @@ public class DistributedCenterController {
 		}
 	}
 
-	@PutMapping("/update")
-	public ResponseEntity<DistributedCenterDTO> updateDC(@RequestBody DistributedCenterDTO dcDTO) throws DistributedCenterException {
+	@PutMapping(path = "/update", produces = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON }, consumes = {
+			MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public ResponseEntity<DistributedCenterDTO> updateDC(@RequestBody DistributedCenterDTO dcDTO)
+			throws DistributedCenterException {
 
 		DistributedCenterDTO dc = dcService.updateDC(dcDTO);
 		if (!ObjectUtils.isEmpty(dc)) {
@@ -68,7 +75,8 @@ public class DistributedCenterController {
 
 	}
 
-	@DeleteMapping("/delete/all")
+	@DeleteMapping(path = "/delete/all", produces = { MediaType.APPLICATION_XML,
+			MediaType.APPLICATION_JSON }, consumes = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public ResponseEntity<List<DistributedCenterDTO>> deleteAllDC() {
 		List<DistributedCenterDTO> dcList = dcService.deleteAllDC();
 		if (!CollectionUtils.isEmpty(dcList)) {
@@ -78,7 +86,8 @@ public class DistributedCenterController {
 		}
 	}
 
-	@DeleteMapping("/delete/{dcId}")
+	@DeleteMapping(path = "/delete/{dcId}", produces = { MediaType.APPLICATION_XML,
+			MediaType.APPLICATION_JSON }, consumes = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public ResponseEntity<DistributedCenterDTO> deleteDCById(@PathVariable("dcId") Integer dcId) {
 		DistributedCenterDTO dc = dcService.deleteDCById(dcId);
 		if (!ObjectUtils.isEmpty(dc)) {

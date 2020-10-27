@@ -16,7 +16,7 @@ import com.po.model.PurchaseOrder;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@RequestMapping("/po/producer")
+@RequestMapping("/poproducer")
 @Slf4j
 public class PoProducerController {
 

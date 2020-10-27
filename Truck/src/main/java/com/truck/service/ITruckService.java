@@ -7,16 +7,16 @@ import com.truck.exception.TruckException;
 
 public interface ITruckService {
 
-	public TruckDTO addTruck(TruckDTO truckDTO) throws TruckException;
+	TruckDTO addTruck(TruckDTO truckDTO) throws TruckException;
 
-	public List<TruckDTO> getAllTrucks();
+	List<TruckDTO> getAllTrucks();
 
-	public TruckDTO searchTruckById(Integer trcukId);
+	TruckDTO searchTruckById(Integer trcukId);
 
-	public TruckDTO deleteTruckById(Integer trcukId);
+	TruckDTO deleteTruckById(Integer trcukId);
 
-	public List<TruckDTO> deleteAllTruck();
+	List<TruckDTO> deleteAllTruck();
 
-	public TruckDTO updateTruck(TruckDTO trcukDTO) throws TruckException;
+	TruckDTO updateTruck(TruckDTO trcukDTO) throws TruckException;
 
 }

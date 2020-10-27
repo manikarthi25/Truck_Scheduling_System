@@ -7,16 +7,16 @@ import com.dc.exception.DistributedCenterException;
 
 public interface IDistributedCenterService {
 
-	public DistributedCenterDTO addDC(DistributedCenterDTO distributedCenterDTO) throws DistributedCenterException;
+	DistributedCenterDTO addDC(DistributedCenterDTO distributedCenterDTO) throws DistributedCenterException;
 
-	public List<DistributedCenterDTO> getAllDCs();
+	List<DistributedCenterDTO> getAllDCs();
 
-	public DistributedCenterDTO searchDCById(Integer dcId);
+	DistributedCenterDTO searchDCById(Integer dcId);
 
-	public DistributedCenterDTO deleteDCById(Integer dcId);
+	DistributedCenterDTO deleteDCById(Integer dcId);
 
-	public List<DistributedCenterDTO> deleteAllDC();
+	List<DistributedCenterDTO> deleteAllDC();
 
-	public DistributedCenterDTO updateDC(DistributedCenterDTO dcDTO) throws DistributedCenterException;
+	DistributedCenterDTO updateDC(DistributedCenterDTO dcDTO) throws DistributedCenterException;
 
 }

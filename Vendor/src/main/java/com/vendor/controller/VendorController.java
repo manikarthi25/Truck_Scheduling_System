@@ -2,6 +2,8 @@ package com.vendor.controller;
 
 import java.util.List;
 
+import javax.ws.rs.core.MediaType;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,15 +29,17 @@ public class VendorController {
 	@Autowired
 	private IVendorService vendorService;
 
-	@PostMapping("/add")
-	public ResponseEntity<VendorDTO> addVendor(@RequestBody VendorDTO VendorDTO) throws VendorException {
+	@PostMapping(path = "/add", produces = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON }, consumes = {
+			MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public ResponseEntity<VendorDTO> addVendor(@RequestBody VendorDTO vendorDTO) throws VendorException {
 
-		VendorDTO vendorDTO = vendorService.addVendor(VendorDTO);
-		return ResponseEntity.status(HttpStatus.CREATED).body(vendorDTO);
+		VendorDTO vendor = vendorService.addVendor(vendorDTO);
+		return ResponseEntity.status(HttpStatus.CREATED).body(vendor);
 
 	}
 
-	@GetMapping("/get/all")
+	@GetMapping(path = "/get/all", produces = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON }, consumes = {
+			MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public ResponseEntity<List<VendorDTO>> getAllVendors() {
 		List<VendorDTO> vendorDTOList = vendorService.getAllVendors();
 		if (!CollectionUtils.isEmpty(vendorDTOList)) {
@@ -45,7 +49,8 @@ public class VendorController {
 		}
 	}
 
-	@GetMapping("/search/{vendorId}")
+	@GetMapping(path = "/search/{vendorId}", produces = { MediaType.APPLICATION_XML,
+			MediaType.APPLICATION_JSON }, consumes = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public ResponseEntity<VendorDTO> searchVendorById(@PathVariable("vendorId") Integer vendorId) {
 		VendorDTO vendorDTO = vendorService.searchVendorById(vendorId);
 		if (!ObjectUtils.isEmpty(vendorDTO)) {
@@ -55,7 +60,8 @@ public class VendorController {
 		}
 	}
 
-	@PutMapping("/update")
+	@PutMapping(path = "/update", produces = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON }, consumes = {
+			MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public ResponseEntity<VendorDTO> updateVendor(@RequestBody VendorDTO vendorDTO) throws VendorException {
 
 		VendorDTO vendor = vendorService.updateVendor(vendorDTO);
@@ -67,7 +73,8 @@ public class VendorController {
 
 	}
 
-	@DeleteMapping("/delete/all")
+	@DeleteMapping(path = "/delete/all", produces = { MediaType.APPLICATION_XML,
+			MediaType.APPLICATION_JSON }, consumes = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public ResponseEntity<List<VendorDTO>> deleteAllVendors() {
 		List<VendorDTO> vendorDTOList = vendorService.deleteAllVendors();
 		if (!CollectionUtils.isEmpty(vendorDTOList)) {
@@ -77,7 +84,8 @@ public class VendorController {
 		}
 	}
 
-	@DeleteMapping("/delete/{vendorId}")
+	@DeleteMapping(path = "/delete/{vendorId}", produces = { MediaType.APPLICATION_XML,
+			MediaType.APPLICATION_JSON }, consumes = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public ResponseEntity<VendorDTO> deleteVendorById(@PathVariable("vendorId") Integer vendorId) {
 		VendorDTO vendorDTO = vendorService.deleteVendorById(vendorId);
 		if (!ObjectUtils.isEmpty(vendorDTO)) {

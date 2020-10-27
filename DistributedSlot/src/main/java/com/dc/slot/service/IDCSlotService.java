@@ -3,7 +3,6 @@ package com.dc.slot.service;
 import java.util.List;
 
 import com.dc.slot.dto.DCSlotDTO;
-import com.dc.slot.entity.DCSlotEO;
 import com.dc.slot.exception.DCSlotException;
 
 public interface IDCSlotService {
