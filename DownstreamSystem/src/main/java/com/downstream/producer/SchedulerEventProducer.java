@@ -31,7 +31,7 @@ public class SchedulerEventProducer {
 	
 	public void sendSchedulerEvent(DownstreamMessage downstreamMessage)
 			throws JsonProcessingException {
-		String topic = "scheduler-events";
+		String topic = "truck-topic";
 		Long key = downstreamMessage.getAppointmentNumber();
 		String value = objectMapper.writeValueAsString(downstreamMessage);
 

@@ -10,7 +10,7 @@ public class AutoKafkaConfig {
 
 	@Bean
 	public NewTopic createNewTopic() {
-		return TopicBuilder.name("library-events").partitions(3).replicas(3).build();
+		return TopicBuilder.name("truck-topic").partitions(3).replicas(3).build();
 	}
 
 }

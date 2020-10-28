@@ -1,5 +1,7 @@
 package com.downstream.dto;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,18 +13,16 @@ import lombok.NoArgsConstructor;
 @Builder
 public class DownstreamMessage {
 
-	private String dcNumber;
+	private Integer dcNumber;
 
 	private String eventType;
 
-	private Long poNumber;
-
 	private Long truckNumber;
-
-	private Long caseQty;
 
 	private Long appointmentNumber;
 
 	private String appointmentDate;
+
+	private List<PurchaseOrder> purchaseOrderList;
 
 }

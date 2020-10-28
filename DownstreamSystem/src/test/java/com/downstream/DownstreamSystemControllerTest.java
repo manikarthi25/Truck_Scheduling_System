@@ -2,7 +2,9 @@ package com.downstream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.kafka.clients.consumer.Consumer;
@@ -28,9 +30,10 @@ import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.context.TestPropertySource;
 
 import com.downstream.dto.DownstreamMessage;
+import com.downstream.dto.PurchaseOrder;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@EmbeddedKafka(topics = { "scheduler-events" }, partitions = 3)
+@EmbeddedKafka(topics = { "truck-topic" }, partitions = 3)
 @TestPropertySource(properties = { "spring.kafka.producer.bootstrap-servers=${spring.embedded.kafka.brokers}",
 		"spring.kafka.admin.properties.bootstrap-servers=${spring.embedded.kafka.brokers}" })
 public class DownstreamSystemControllerTest {
@@ -61,11 +64,19 @@ public class DownstreamSystemControllerTest {
 
 	@Test
 	public void testPostSchedulerEvent() {
-		
-		String url = "/scheduler/postschedulerevent";
-		DownstreamMessage downstreamMessage = DownstreamMessage.builder().dcNumber("DC7079").eventType("CREATE").poNumber(Long.valueOf(8888))
-				.truckNumber(Long.valueOf(1234)).caseQty(Long.valueOf(99)).appointmentNumber(Long.valueOf(9940))
-				.appointmentDate("2020-10-10").build();
+
+		String url = "/downstream/post/appointment";
+
+		PurchaseOrder purchaseOrder = new PurchaseOrder();
+		purchaseOrder.setPoNumber("8888");
+		purchaseOrder.setCaseQty(Long.valueOf(99));
+
+		List<PurchaseOrder> purchaseOrderList = new ArrayList<>();
+		purchaseOrderList.add(purchaseOrder);
+
+		DownstreamMessage downstreamMessage = DownstreamMessage.builder().dcNumber(7079).eventType("CREATE")
+				.truckNumber(Long.valueOf(1234)).appointmentNumber(Long.valueOf(9940)).appointmentDate("2020-10-10")
+				.purchaseOrderList(purchaseOrderList).build();
 
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.set("Content-Type", MediaType.APPLICATION_JSON.toString());
@@ -75,8 +86,8 @@ public class DownstreamSystemControllerTest {
 
 		assertEquals(HttpStatus.OK, responseSchedulerEvent.getStatusCode());
 
-		ConsumerRecord<Long, String> consumerRecord = KafkaTestUtils.getSingleRecord(consumer, "scheduler-events");
-		String expectedRecord = "{\"dcNumber\":\"DC7079\",\"eventType\":\"CREATE\",\"poNumber\":8888,\"truckNumber\":1234,\"caseQty\":99,\"appointmentNumber\":9940,\"appointmentDate\":\"2020-10-10\"}";
+		ConsumerRecord<Long, String> consumerRecord = KafkaTestUtils.getSingleRecord(consumer, "truck-topic");
+		String expectedRecord = "{\"dcNumber\":7079,\"eventType\":\"CREATE\",\"truckNumber\":1234,\"appointmentNumber\":9940,\"appointmentDate\":\"2020-10-10\",\"purchaseOrderList\":[{\"poNumber\":\"8888\",\"caseQty\":99}]}";
 		String actualRecord = consumerRecord.value();
 		assertEquals(expectedRecord, actualRecord);
 

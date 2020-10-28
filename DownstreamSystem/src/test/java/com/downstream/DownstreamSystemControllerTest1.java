@@ -4,6 +4,9 @@ import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -14,6 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.downstream.controller.DownstreamMessageController;
 import com.downstream.dto.DownstreamMessage;
+import com.downstream.dto.PurchaseOrder;
 import com.downstream.producer.SchedulerEventProducer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,13 +37,20 @@ public class DownstreamSystemControllerTest1 {
 	@Test
 	public void testPostSchedulerEvent() throws Exception, JsonProcessingException {
 
-		DownstreamMessage downstreamMessage = DownstreamMessage.builder().dcNumber("DC7079").eventType("CREATE")
-				.truckNumber(Long.valueOf(9999)).caseQty(Long.valueOf(9999)).appointmentNumber(Long.valueOf(9999))
-				.appointmentDate("2020-10-10").poNumber(Long.valueOf(9999)).build();
+		PurchaseOrder purchaseOrder = new PurchaseOrder();
+		purchaseOrder.setPoNumber("8888");
+		purchaseOrder.setCaseQty(Long.valueOf(99));
+
+		List<PurchaseOrder> purchaseOrderList = new ArrayList<>();
+		purchaseOrderList.add(purchaseOrder);
+
+		DownstreamMessage downstreamMessage = DownstreamMessage.builder().dcNumber(7079).eventType("CREATE")
+				.truckNumber(Long.valueOf(1234)).appointmentNumber(Long.valueOf(9940)).appointmentDate("2020-10-10")
+				.purchaseOrderList(purchaseOrderList).build();
 
 		String json = objectMapper.writeValueAsString(downstreamMessage);
 
-		String url = "/scheduler/postschedulerevent";
+		String url = "/downstream/post/appointment";
 
 		doNothing().when(schedulerEventProducer).sendSchedulerEvent(downstreamMessage);
 

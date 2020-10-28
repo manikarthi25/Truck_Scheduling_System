@@ -4,7 +4,6 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,9 +24,7 @@ public class DownstreamMessageController {
 	@Autowired
 	private SchedulerEventProducer schedulerEventProducer;
 
-	@PostMapping(value = "/post/appointment", produces = { MediaType.APPLICATION_JSON_VALUE,
-			MediaType.APPLICATION_XML_VALUE }, consumes = { MediaType.APPLICATION_JSON_VALUE,
-					MediaType.APPLICATION_XML_VALUE })
+	@PostMapping(value = "/post/appointment")
 	public ResponseEntity<?> postSchedulerEvent(@RequestBody @Valid DownstreamMessage downstreamMessage)
 			throws JsonProcessingException {
 
