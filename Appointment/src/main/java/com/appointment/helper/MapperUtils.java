@@ -23,7 +23,6 @@ public class MapperUtils {
 	public AppointmentDTO mapToAppointmentDTO(AppointmentEO appointmentEO) {
 		AppointmentDTO appointmentDTO = modelMapper.map(appointmentEO, AppointmentDTO.class);
 		appointmentDTO.setDistributedCenterDTO(mapToDCDTO(appointmentEO.getDistributedCenterEO()));
-		appointmentDTO.setAppointmentPoDTOList(getApptDTO(appointmentEO.getAppointmentPoEOList()));
 		appointmentDTO.setDcSlotDTO(mapToDCSlotDTO(appointmentEO.getDcSlotEO()));
 		appointmentDTO.setTruckDTO(mapToTruckDTO(appointmentEO.getTruckEO()));
 		return appointmentDTO;
@@ -32,7 +31,6 @@ public class MapperUtils {
 	public AppointmentEO mapToAppointmentEO(AppointmentDTO appointmentDTO) {
 		AppointmentEO appointmentEO = modelMapper.map(appointmentDTO, AppointmentEO.class);
 		appointmentEO.setDistributedCenterEO(mapToDCEO(appointmentDTO.getDistributedCenterDTO()));
-		appointmentEO.setAppointmentPoEOList(getApptEO(appointmentDTO.getAppointmentPoDTOList()));
 		appointmentEO.setDcSlotEO(mapToDCSlotEO(appointmentDTO.getDcSlotDTO()));
 		appointmentEO.setTruckEO(mapToTruckEO(appointmentDTO.getTruckDTO()));
 		return appointmentEO;
@@ -70,15 +68,7 @@ public class MapperUtils {
 		return modelMapper.map(appointmentPoDTO, AppointmentPoEO.class);
 	}
 
-	private List<AppointmentPoEO> getApptEO(List<AppointmentPoDTO> appointmentPoDTOList) {
-		List<AppointmentPoEO> appointmentPoEOList = new ArrayList<>();
-		for (AppointmentPoDTO appointmentPoDTO : appointmentPoDTOList) {
-			appointmentPoEOList.add(mapToApptPoEO(appointmentPoDTO));
-		}
-		return appointmentPoEOList;
-	}
-
-	private List<AppointmentPoDTO> getApptDTO(List<AppointmentPoEO> appointmentPoEOList) {
+	public List<AppointmentPoDTO> getApptPoDTO(List<AppointmentPoEO> appointmentPoEOList) {
 		List<AppointmentPoDTO> appointmentPoDTOList = new ArrayList<>();
 		for (AppointmentPoEO appointmentPoEO : appointmentPoEOList) {
 			appointmentPoDTOList.add(mapToApptPoDTO(appointmentPoEO));

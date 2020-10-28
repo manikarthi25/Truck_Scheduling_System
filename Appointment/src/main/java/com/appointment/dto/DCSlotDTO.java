@@ -28,7 +28,4 @@ public class DCSlotDTO {
 	private String lastUpdatedBy;
 
 	private LocalDateTime lastUpdatedTS;
-
-	private DistributedCenterDTO distributedCenterDTO;
-
 }

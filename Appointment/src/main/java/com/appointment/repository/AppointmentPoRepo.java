@@ -15,7 +15,7 @@ public interface AppointmentPoRepo extends JpaRepository<AppointmentPoEO, Intege
 	@Query(value = "delete from appointment_po where appt_id = :apptId", nativeQuery = true)
 	void deleteByAppointmentId(@Param("apptId") Long apptId);
 	
-	@Query(value = "select appt_po_id, appt_id, po_number from appointment_po where appt_id = :apptId", nativeQuery = true)
+	@Query(value = "select * from appointment_po where appt_id = :apptId", nativeQuery = true)
 	List<AppointmentPoEO> getAppointmentPoByApptId (@Param("apptId") Long apptId);
-
+	
 }

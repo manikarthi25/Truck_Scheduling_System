@@ -27,6 +27,4 @@ public class AppointmentPoDTO {
 
 	private LocalDateTime lastUpdatedTS;
 
-	private AppointmentDTO appointmentDTO;
-
 }

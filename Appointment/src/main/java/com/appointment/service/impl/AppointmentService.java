@@ -1,9 +1,10 @@
 package com.appointment.service.impl;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.client.RestTemplate;
 
 import com.appointment.AppointmentException;
@@ -33,13 +35,13 @@ import com.appointment.service.IAppointmentService;
 public class AppointmentService implements IAppointmentService {
 
 	@Autowired
-	private PurchaseOrderRepo purchaseOrderRepp;
+	private PurchaseOrderRepo purchaseOrderRepo;
 
 	@Autowired
 	private AppointmentRepo appointmentRepo;
 
 	@Autowired
-	private AppointmentPoRepo appointmentPORepo;
+	private AppointmentPoRepo appointmentPoRepo;
 
 	@Autowired
 	private DCSlotRepo dcSlotRepo;
@@ -56,39 +58,16 @@ public class AppointmentService implements IAppointmentService {
 		int availableSlotCount = availableSlotCount(appointmentDTO.getDcSlotDTO().getDcSlotId());
 		boolean poAvailaleStatus = isPOAvailable(appointmentDTO.getAppointmentPoDTOList());
 		if (poAvailaleStatus) {
-			if (usedTruckCount < availableSlotCount) {
+			if (usedTruckCount <= availableSlotCount) {
 				AppointmentEO appointmentEO = mapperUtils.mapToAppointmentEO(appointmentDTO);
 
 				AppointmentEO responseEO = appointmentRepo.save(appointmentEO);
 
 				List<String> availablePOs = new ArrayList<>();
-				List<AppointmentPoEO> appointmentPoEOList = new ArrayList<>();
 				for (AppointmentPoDTO appointmentPoDTO : appointmentDTO.getAppointmentPoDTOList()) {
-					AppointmentPoEO appointmentPoEO = new AppointmentPoEO();
-
-					appointmentPoEO.setApptPoId(appointmentPoDTO.getApptPoId());
-					appointmentPoEO.setPoNumber(appointmentPoDTO.getPoNumber());
-					appointmentPoEO.setAppointmentEO(responseEO);
-
-					appointmentPoEOList.add(appointmentPoEO);
+					appointmentPoRepo.save(getAppointmentPoEO(appointmentPoDTO));
 					availablePOs.add(appointmentPoDTO.getPoNumber());
 				}
-
-				Iterable<AppointmentPoEO> iterable = () -> new Iterator<AppointmentPoEO>() {
-					private int index = 0;
-
-					@Override
-					public boolean hasNext() {
-						return appointmentPoEOList.size() > index;
-					}
-
-					@Override
-					public AppointmentPoEO next() {
-						return appointmentPoEOList.get(index++);
-					}
-				};
-
-				appointmentPORepo.saveAll(iterable);
 
 				DownstreamMessage downstreamMessage = new DownstreamMessage();
 				downstreamMessage.setAppointmentId(responseEO.getApptId());
@@ -109,24 +88,68 @@ public class AppointmentService implements IAppointmentService {
 
 	@Override
 	public AppointmentDTO searchAppointmentById(Long apptId) throws AppointmentException {
-		return appointmentRepo.findById(apptId).map(appointment -> {
+		AppointmentDTO appointmentDTO = appointmentRepo.findById(apptId).map(appointment -> {
 			return mapperUtils.mapToAppointmentDTO(appointment);
 		}).orElseThrow(() -> new AppointmentException("No Slots Found"));
+
+		List<AppointmentPoEO> appointmentPoEOList = appointmentPoRepo.getAppointmentPoByApptId(apptId);
+		if (!CollectionUtils.isEmpty(appointmentPoEOList)) {
+			appointmentDTO.setAppointmentPoDTOList(mapperUtils.getApptPoDTO(appointmentPoEOList));
+		}
+		return appointmentDTO;
 	}
 
 	@Override
 	public void deleteAppointmentById(Long apptId) throws AppointmentException {
 		Optional<AppointmentEO> appointmentEO = appointmentRepo.findById(apptId);
 		if (appointmentEO.isPresent()) {
-			List<AppointmentPoEO> appointmentPos = appointmentPORepo.getAppointmentPoByApptId(apptId);
+			List<AppointmentPoEO> appointmentPos = appointmentPoRepo.getAppointmentPoByApptId(apptId);
 			for (AppointmentPoEO appointmentPo : appointmentPos) {
-				appointmentPORepo.deleteById(appointmentPo.getApptPoId());
+				appointmentPoRepo.deleteById(appointmentPo.getApptPoId());
 			}
 
 			appointmentRepo.delete(appointmentEO.get());
 		} else {
 			throw new AppointmentException("No Appointment Found");
 		}
+	}
+
+	@Override
+	@Transactional
+	public AppointmentDTO update(AppointmentDTO appointmentDTO) throws AppointmentException {
+		int usedTruckCount = appointmentRepo.getCountBySlotId(appointmentDTO.getDcSlotDTO().getDcSlotId());
+		int availableSlotCount = availableSlotCount(appointmentDTO.getDcSlotDTO().getDcSlotId());
+
+		AppointmentEO responseAppointmentEO = null;
+		boolean poAvailableStatus = isPOAvailable(appointmentDTO.getAppointmentPoDTOList());
+		if (poAvailableStatus) {
+			if (usedTruckCount <= availableSlotCount) {
+				if (appointmentRepo.findById(appointmentDTO.getApptId()).isPresent()) {
+					responseAppointmentEO = appointmentRepo
+							.saveAndFlush(mapperUtils.mapToAppointmentEO(appointmentDTO));
+
+					List<AppointmentPoEO> appointmentPoEOList = appointmentPoRepo
+							.getAppointmentPoByApptId(appointmentDTO.getApptId());
+					for (AppointmentPoEO appointmentPoEO : appointmentPoEOList) {
+						appointmentPoRepo.deleteById(appointmentPoEO.getApptPoId());
+					}
+
+					for (AppointmentPoDTO appointmentPoDTO : appointmentDTO.getAppointmentPoDTOList()) {
+						appointmentPoRepo.save(getAppointmentPoEO(appointmentPoDTO));
+					}
+
+				} else {
+					throw new AppointmentException("No Appointments found to update");
+				}
+			} else {
+				throw new AppointmentException("Slots were reached with max truck count");
+			}
+		} else {
+			throw new AppointmentException("One of the po is not available to update the appointment");
+		}
+
+		return (!ObjectUtils.isEmpty(responseAppointmentEO)) ? mapperUtils.mapToAppointmentDTO(responseAppointmentEO)
+				: null;
 	}
 
 	private int availableSlotCount(Integer dcSlotId) {
@@ -141,7 +164,7 @@ public class AppointmentService implements IAppointmentService {
 
 	private Boolean isPOAvailable(List<AppointmentPoDTO> appointmentPoDTOList) {
 		for (AppointmentPoDTO appointmentPoDTO : appointmentPoDTOList) {
-			List<PurchaseOrderEO> purchaseOrderEOList = purchaseOrderRepp
+			List<PurchaseOrderEO> purchaseOrderEOList = purchaseOrderRepo
 					.findByPoNumber(appointmentPoDTO.getPoNumber());
 			if (CollectionUtils.isEmpty(purchaseOrderEOList)) {
 				return false;
@@ -165,6 +188,20 @@ public class AppointmentService implements IAppointmentService {
 		HttpEntity<DownstreamMessage> requestEntity = new HttpEntity<>(downstreamMessage, headers);
 
 		restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
+	}
+
+	private AppointmentPoEO getAppointmentPoEO(AppointmentPoDTO appointmentPoDTO) {
+
+		AppointmentPoEO appointmentPoEO = new AppointmentPoEO();
+
+		appointmentPoEO.setApptPoId(appointmentPoDTO.getApptPoId());
+		appointmentPoEO.setPoNumber(appointmentPoDTO.getPoNumber());
+		appointmentPoEO.setCreatedBy(appointmentPoDTO.getCreatedBy());
+		appointmentPoEO.setCreatedTS(appointmentPoDTO.getCreatedTS());
+		appointmentPoEO.setLastUpdatedBy(appointmentPoDTO.getLastUpdatedBy());
+		appointmentPoEO.setLastUpdatedTS(appointmentPoDTO.getLastUpdatedTS());
+
+		return appointmentPoEO;
 	}
 
 }

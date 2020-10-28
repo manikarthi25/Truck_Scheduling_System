@@ -11,4 +11,6 @@ public interface IAppointmentService {
 
 	void deleteAppointmentById(Long apptId) throws AppointmentException;
 
+	AppointmentDTO update(AppointmentDTO appointmentDTO) throws AppointmentException;
+
 }
