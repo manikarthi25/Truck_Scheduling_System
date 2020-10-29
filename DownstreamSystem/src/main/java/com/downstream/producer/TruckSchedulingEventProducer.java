@@ -13,7 +13,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 
+import com.downstream.constant.ErrorCode;
+import com.downstream.constant.ErrorMessage;
 import com.downstream.dto.DownstreamMessage;
+import com.downstream.exception.DownstreamException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -21,16 +24,15 @@ import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
-public class SchedulerEventProducer {
+public class TruckSchedulingEventProducer {
 
 	@Autowired
 	KafkaTemplate<Long, String> kafkaTemplate;
 
 	@Autowired
 	ObjectMapper objectMapper;
-	
-	public void sendSchedulerEvent(DownstreamMessage downstreamMessage)
-			throws JsonProcessingException {
+
+	public void sendTruckSchedulingEvent(DownstreamMessage downstreamMessage) throws JsonProcessingException {
 		String topic = "truck-topic";
 		Long key = downstreamMessage.getAppointmentNumber();
 		String value = objectMapper.writeValueAsString(downstreamMessage);
@@ -41,7 +43,11 @@ public class SchedulerEventProducer {
 
 			@Override
 			public void onFailure(Throwable ex) {
-				handleFailure(key, value, ex);
+				try {
+					handleFailure(key, value, ex);
+				} catch (DownstreamException e) {
+					log.error(e.getMessage());
+				}
 			}
 
 			@Override
@@ -60,17 +66,18 @@ public class SchedulerEventProducer {
 	}
 
 	protected void handleSuccess(Long key, String value, SendResult<Long, String> result) {
-		log.info("Message sent sucessfully. Key : {} value : {}, result : {}", key, value, result.getRecordMetadata());
+
+		log.info("Truck Scheduling information sent sucessfully. Key : {} value : {}, result : {}", key, value,
+				result.getRecordMetadata());
 
 	}
 
-	protected void handleFailure(Long key, String value, Throwable ex) {
-		log.error("Error sending the message and exception is : {}", ex.getMessage());
-		try {
-			throw ex;
-		} catch (Throwable throwable) {
-			log.error("Error sending the message and exception is : {}", throwable.getMessage());
-		}
+	protected void handleFailure(Long key, String value, Throwable ex) throws DownstreamException {
+
+		log.info("Truck Scheduling information publish failed. Key : {} value : {}, Exception : {}", key, value,
+				ex.getMessage());
+		throw new DownstreamException(ErrorCode.TRUCK_APPOINTMENT_PUBLISH_ERROR,
+				ErrorMessage.TRUCK_APPOINTMENT_PUBLISH_FAILED);
 
 	}
 

@@ -16,15 +16,16 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.client.RestTemplate;
 
-import com.appointment.AppointmentException;
 import com.appointment.dto.AppointmentDTO;
 import com.appointment.dto.AppointmentPoDTO;
 import com.appointment.dto.DCSlotDTO;
 import com.appointment.entity.AppointmentEO;
 import com.appointment.entity.AppointmentPoEO;
 import com.appointment.entity.PurchaseOrderEO;
+import com.appointment.exception.AppointmentException;
 import com.appointment.helper.MapperUtils;
 import com.appointment.model.DownstreamMessage;
+import com.appointment.model.PO;
 import com.appointment.repository.AppointmentPoRepo;
 import com.appointment.repository.AppointmentRepo;
 import com.appointment.repository.DCSlotRepo;
@@ -59,25 +60,26 @@ public class AppointmentService implements IAppointmentService {
 		boolean poAvailaleStatus = isPOAvailable(appointmentDTO.getAppointmentPoDTOList());
 		if (poAvailaleStatus) {
 			if (usedTruckCount <= availableSlotCount) {
-				AppointmentEO appointmentEO = mapperUtils.mapToAppointmentEO(appointmentDTO);
 
-				AppointmentEO responseEO = appointmentRepo.save(appointmentEO);
+				AppointmentEO appointmentEO = appointmentRepo.save(mapperUtils.mapToAppointmentEO(appointmentDTO));
 
-				List<String> availablePOs = new ArrayList<>();
+				List<PO> poList = new ArrayList<>();
 				for (AppointmentPoDTO appointmentPoDTO : appointmentDTO.getAppointmentPoDTOList()) {
-					appointmentPoRepo.save(getAppointmentPoEO(appointmentPoDTO));
-					availablePOs.add(appointmentPoDTO.getPoNumber());
+					PO availablePO = new PO();
+					if(null !=  appointmentEO.getApptId()) {
+						AppointmentPoEO appointmentPoEO = appointmentPoRepo.save(getAppointmentPoEO(appointmentPoDTO, appointmentEO));
+						availablePO.setPoNumber(appointmentPoEO.getPoNumber());
+						availablePO.setCaseQty(appointmentPoEO.getPoQty());
+						poList.add(availablePO);
+					} else {
+						throw new AppointmentException("Appointment Po is not inserted");
+					}
+					
+					poList.add(availablePO);
 				}
 
-				DownstreamMessage downstreamMessage = new DownstreamMessage();
-				downstreamMessage.setAppointmentId(responseEO.getApptId());
-				downstreamMessage.setTruckNumber(appointmentDTO.getTruckDTO().getTruckNumber());
-				downstreamMessage.setDcNumber(appointmentDTO.getDistributedCenterDTO().getDcNumber());
-				downstreamMessage.setTimeSlot(appointmentDTO.getDcSlotDTO().getDcTimeSlot());
-				downstreamMessage.setPos(availablePOs);
-
-				sendDownstreamMessage(downstreamMessage);
-				return mapperUtils.mapToAppointmentDTO(responseEO);
+				sendDownstreamMessage(appointmentEO, poList, "CREATE");
+				return mapperUtils.mapToAppointmentDTO(appointmentEO);
 			} else {
 				throw new AppointmentException("Max truck count reached for the slot");
 			}
@@ -107,7 +109,6 @@ public class AppointmentService implements IAppointmentService {
 			for (AppointmentPoEO appointmentPo : appointmentPos) {
 				appointmentPoRepo.deleteById(appointmentPo.getApptPoId());
 			}
-
 			appointmentRepo.delete(appointmentEO.get());
 		} else {
 			throw new AppointmentException("No Appointment Found");
@@ -134,9 +135,15 @@ public class AppointmentService implements IAppointmentService {
 						appointmentPoRepo.deleteById(appointmentPoEO.getApptPoId());
 					}
 
+					List<PO> poList = new ArrayList<>();
 					for (AppointmentPoDTO appointmentPoDTO : appointmentDTO.getAppointmentPoDTOList()) {
-						appointmentPoRepo.save(getAppointmentPoEO(appointmentPoDTO));
+						PO availablePO = new PO();
+						AppointmentPoEO appointmentPoEO = appointmentPoRepo.save(getAppointmentPoEO(appointmentPoDTO, responseAppointmentEO));
+						availablePO.setPoNumber(appointmentPoEO.getPoNumber());
+						availablePO.setCaseQty(appointmentPoEO.getPoQty());
+						poList.add(availablePO);
 					}
+					sendDownstreamMessage(responseAppointmentEO, poList, "UPDATE");
 
 				} else {
 					throw new AppointmentException("No Appointments found to update");
@@ -179,8 +186,17 @@ public class AppointmentService implements IAppointmentService {
 		}).orElseThrow(() -> new AppointmentException("No Slots Found"));
 	}
 
-	private void sendDownstreamMessage(DownstreamMessage downstreamMessage) {
-		String url = "http://downstream-ms/downstream/post/appointment";
+	private void sendDownstreamMessage(AppointmentEO appointmentEO, List<PO> poList, String eventType) {
+		
+		DownstreamMessage downstreamMessage = new DownstreamMessage();
+		downstreamMessage.setDcNumber(appointmentEO.getDistributedCenterEO().getDcNumber());
+		downstreamMessage.setEventType(eventType);
+		downstreamMessage.setTruckNumber(appointmentEO.getTruckEO().getTruckNumber());
+		downstreamMessage.setAppointmentNumber(appointmentEO.getApptId());
+		downstreamMessage.setAppointmentDate(appointmentEO.getAppointmentDate().toString());
+		downstreamMessage.setPurchaseOrderList(poList);
+		
+		String url = "http://localhost:9090/downstream-ms/downstream/post/appointment";
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
@@ -190,12 +206,14 @@ public class AppointmentService implements IAppointmentService {
 		restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
 	}
 
-	private AppointmentPoEO getAppointmentPoEO(AppointmentPoDTO appointmentPoDTO) {
+	private AppointmentPoEO getAppointmentPoEO(AppointmentPoDTO appointmentPoDTO, AppointmentEO responseEO) {
 
 		AppointmentPoEO appointmentPoEO = new AppointmentPoEO();
 
+		appointmentPoEO.setAppointmentEO(responseEO);
 		appointmentPoEO.setApptPoId(appointmentPoDTO.getApptPoId());
 		appointmentPoEO.setPoNumber(appointmentPoDTO.getPoNumber());
+		appointmentPoEO.setPoQty(appointmentPoDTO.getPoQty());
 		appointmentPoEO.setCreatedBy(appointmentPoDTO.getCreatedBy());
 		appointmentPoEO.setCreatedTS(appointmentPoDTO.getCreatedTS());
 		appointmentPoEO.setLastUpdatedBy(appointmentPoDTO.getLastUpdatedBy());

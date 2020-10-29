@@ -1,7 +1,7 @@
 package com.appointment.service;
 
-import com.appointment.AppointmentException;
 import com.appointment.dto.AppointmentDTO;
+import com.appointment.exception.AppointmentException;
 
 public interface IAppointmentService {
 

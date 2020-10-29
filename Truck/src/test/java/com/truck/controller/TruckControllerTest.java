@@ -49,6 +49,19 @@ public class TruckControllerTest {
 	}
 
 	@Test
+	public void testAddTruck_Conflict() throws TruckException {
+		TruckDTO truckDTO = getTruckDTO();
+		EasyMock.expect(mockTruckService.addTruck(truckDTO)).andReturn(null).times(1);
+		EasyMock.replay(mockTruckService);
+
+		ResponseEntity<TruckDTO> truckResponce = truckController.addTruck(truckDTO);
+
+		Assert.assertEquals(409, truckResponce.getStatusCodeValue());
+
+		EasyMock.verify(mockTruckService);
+	}
+
+	@Test
 	public void testAddTruck_Throw_TruckException() throws TruckException {
 		TruckDTO truckDTO = getTruckDTO();
 		truckDTO.setTruckName(null);
@@ -165,37 +178,6 @@ public class TruckControllerTest {
 	}
 
 	@Test
-	public void testDeleteAllTruck_Ok() {
-
-		List<TruckDTO> truckList = new ArrayList<>();
-		truckList.add(getTruckDTO());
-
-		EasyMock.expect(mockTruckService.deleteAllTruck()).andReturn(truckList);
-		EasyMock.replay(mockTruckService);
-
-		ResponseEntity<List<TruckDTO>> actualTuckResponse = truckController.deleteAllTruck();
-
-		Assert.assertEquals(200, actualTuckResponse.getStatusCodeValue());
-		Assert.assertEquals(truckList, actualTuckResponse.getBody());
-
-		EasyMock.verify(mockTruckService);
-
-	}
-
-	@Test
-	public void testDeleteAllTruck_NoContent() {
-
-		EasyMock.expect(mockTruckService.deleteAllTruck()).andReturn(null);
-		EasyMock.replay(mockTruckService);
-
-		ResponseEntity<List<TruckDTO>> actualTuckResponse = truckController.deleteAllTruck();
-
-		Assert.assertEquals(204, actualTuckResponse.getStatusCodeValue());
-
-		EasyMock.verify(mockTruckService);
-	}
-
-	@Test
 	public void testDeleteTruckById_Ok() {
 
 		TruckDTO truckDTO = getTruckDTO();
@@ -241,7 +223,7 @@ public class TruckControllerTest {
 		truckDTO.setLastUpdatedBy("Karthi");
 		truckDTO.setLastUpdatedTS(LocalDateTime.now());
 		truckDTO.setTruckName("Walmart");
-		truckDTO.setTruckNumber(111);
+		truckDTO.setTruckNumber(Long.valueOf(111));
 		truckDTO.setTruckTypeDTO(truckTypeDTO);
 		return truckDTO;
 

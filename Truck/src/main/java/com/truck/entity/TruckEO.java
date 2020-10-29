@@ -32,7 +32,7 @@ public class TruckEO {
 	private Integer truckId;
 
 	@Column(name = "truck_number", unique = true, nullable = false)
-	private Integer truckNumber;
+	private Long truckNumber;
 
 	@Column(name = "truck_name", nullable = false)
 	private String truckName;

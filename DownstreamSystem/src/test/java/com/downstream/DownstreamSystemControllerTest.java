@@ -15,6 +15,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
@@ -32,6 +33,7 @@ import org.springframework.test.context.TestPropertySource;
 import com.downstream.dto.DownstreamMessage;
 import com.downstream.dto.PurchaseOrder;
 
+@ConditionalOnClass
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EmbeddedKafka(topics = { "truck-topic" }, partitions = 3)
 @TestPropertySource(properties = { "spring.kafka.producer.bootstrap-servers=${spring.embedded.kafka.brokers}",
@@ -63,7 +65,7 @@ public class DownstreamSystemControllerTest {
 	}
 
 	@Test
-	public void testPostSchedulerEvent() {
+	public void testPostTruckSchedulingEvent() {
 
 		String url = "/downstream/post/appointment";
 

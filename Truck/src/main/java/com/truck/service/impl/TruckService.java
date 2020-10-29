@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import com.truck.constant.ErrorCode;
+import com.truck.constant.ErrorMessage;
 import com.truck.dto.TruckDTO;
 import com.truck.entity.TruckEO;
 import com.truck.entity.TruckTypeEO;
@@ -50,17 +52,17 @@ public class TruckService implements ITruckService {
 					truckTypeEO.setTruckTypeName(truckDTO.getTruckTypeDTO().getTruckTypeName());
 					truckEO.setTruckTypeEO(truckTypeEO);
 				} else {
-					throw new TruckException("Check Truck Type");
+					throw new TruckException(ErrorCode.TRUCK_TYPE_ERROR, ErrorMessage.TRUCK_TYPE_FAILED);
 				}
 				truckEO = truckRepo.save(truckEO);
 				return mapperUtils.mapToDTO(truckEO, truckEO.getTruckTypeEO());
 
 			} catch (Exception ex) {
-				log.info("TruckService : addtruck : truck :{} Exception : {}", truckDTO, ex);
-				throw new TruckException("Excetion in during add new truck", ex);
+				log.debug("TruckService : addtruck : truck :{} Exception : {}", truckDTO, ex);
+				throw new TruckException(ErrorCode.TRUCK_SAVE_ERROR, ErrorMessage.TRUCK_SAVE_FAILED);
 			}
 		} else {
-			throw new TruckException("This Truck number is already available");
+			throw new TruckException(ErrorCode.TRUCK_NUMBER_ERROR, ErrorMessage.TRUCK_NUMBER_FAILED);
 		}
 	}
 
@@ -97,7 +99,7 @@ public class TruckService implements ITruckService {
 			}
 		} catch (Exception ex) {
 			log.info("TruckService :  updatetruck : truck :{} Exception : {}", truckDTO, ex);
-			throw new TruckException("Excetion in during update truck", ex);
+			throw new TruckException(ErrorCode.TRUCK_UPDATE_ERROR, ErrorMessage.TRUCK_UPDATE_FAILED);
 		}
 	}
 
@@ -110,12 +112,6 @@ public class TruckService implements ITruckService {
 		} else {
 			return null;
 		}
-	}
-
-	@Override
-	public List<TruckDTO> deleteAllTruck() {
-		truckRepo.deleteAll();
-		return getAllTrucks();
 	}
 
 	private Integer getTruckTypeId(List<TruckTypeEO> truckTypeEOList, String truckTypeName) {
@@ -151,7 +147,7 @@ public class TruckService implements ITruckService {
 			truckTypeEO.setTruckTypeName(truckDTO.getTruckTypeDTO().getTruckTypeName());
 			truckEO.setTruckTypeEO(truckTypeEO);
 		} else {
-			throw new TruckException("Check Truck Name");
+			throw new TruckException(ErrorCode.TRUCK_TYPE_ERROR, ErrorMessage.TRUCK_TYPE_FAILED);
 		}
 		return truckEO;
 	}

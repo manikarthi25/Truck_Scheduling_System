@@ -33,6 +33,9 @@ public class AppointmentPoEO {
 
 	@Column(name = "po_number")
 	private String poNumber;
+	
+	@Column(name = "po_qty")
+	private Long poQty;
 
 	@Column(name = "created_by")
 	private String createdBy;

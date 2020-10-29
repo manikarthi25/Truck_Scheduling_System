@@ -9,5 +9,5 @@ import com.truck.entity.TruckEO;
 
 @Repository
 public interface TruckRepo extends JpaRepository<TruckEO, Integer> {
-	List<TruckEO> findByTruckNumber(Integer truckNumber);
+	List<TruckEO> findByTruckNumber(Long truckNumber);
 }

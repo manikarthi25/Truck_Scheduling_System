@@ -185,7 +185,7 @@ public class TruckServiceTest {
 		truckDTO.setLastUpdatedBy("Karthi");
 		truckDTO.setLastUpdatedTS(LocalDateTime.now());
 		truckDTO.setTruckName("Walmart");
-		truckDTO.setTruckNumber(111);
+		truckDTO.setTruckNumber(Long.valueOf(111));
 		truckDTO.setTruckTypeDTO(truckTypeDTO);
 		return truckDTO;
 

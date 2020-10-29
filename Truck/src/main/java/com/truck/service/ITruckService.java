@@ -15,8 +15,6 @@ public interface ITruckService {
 
 	TruckDTO deleteTruckById(Integer trcukId);
 
-	List<TruckDTO> deleteAllTruck();
-
 	TruckDTO updateTruck(TruckDTO trcukDTO) throws TruckException;
 
 }

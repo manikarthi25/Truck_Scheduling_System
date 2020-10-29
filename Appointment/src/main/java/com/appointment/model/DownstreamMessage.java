@@ -15,11 +15,16 @@ import lombok.ToString;
 @ToString
 public class DownstreamMessage {
 
-	private Long appointmentId;
-	private Integer truckNumber;
 	private Integer dcNumber;
-	private String timeSlot;
+
+	private String eventType;
+
+	private Long truckNumber;
+
+	private Long appointmentNumber;
+
 	private String appointmentDate;
-	private List<String> pos;
+
+	private List<PO> purchaseOrderList;
 
 }

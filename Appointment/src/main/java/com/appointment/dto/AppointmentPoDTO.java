@@ -18,6 +18,8 @@ public class AppointmentPoDTO {
 	private Integer apptPoId;
 	
 	private String poNumber;
+	
+	private Long poQty;
 
 	private String createdBy;
 

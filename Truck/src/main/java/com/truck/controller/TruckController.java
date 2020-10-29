@@ -2,6 +2,7 @@ package com.truck.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
 import javax.ws.rs.core.MediaType;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,11 +34,15 @@ public class TruckController {
 
 	@PostMapping(path = "/add", produces = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON }, consumes = {
 			MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public ResponseEntity<TruckDTO> addTruck(@RequestBody TruckDTO truckDTO) throws TruckException {
+	public ResponseEntity<TruckDTO> addTruck(@Valid @RequestBody TruckDTO truckDTO) throws TruckException {
 
 		log.info("TruckController :: addTruck :: TruckDTO : {}", truckDTO);
 		TruckDTO truck = truckService.addTruck(truckDTO);
-		return ResponseEntity.status(HttpStatus.CREATED).body(truck);
+		if (!ObjectUtils.isEmpty(truck)) {
+			return ResponseEntity.status(HttpStatus.CREATED).body(truck);
+		} else {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(truck);
+		}
 
 	}
 
@@ -71,7 +76,7 @@ public class TruckController {
 
 	@PutMapping(path = "/update", produces = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON }, consumes = {
 			MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public ResponseEntity<TruckDTO> updateTruck(@RequestBody TruckDTO truckDTO) throws TruckException {
+	public ResponseEntity<TruckDTO> updateTruck(@Valid @RequestBody TruckDTO truckDTO) throws TruckException {
 
 		TruckDTO truck = truckService.updateTruck(truckDTO);
 		log.info("TruckController :: updateTruck :: TruckDTO : {}", truck);
@@ -79,20 +84,6 @@ public class TruckController {
 			return ResponseEntity.status(HttpStatus.OK).body(truck);
 		} else {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(truck);
-		}
-
-	}
-
-	@DeleteMapping(path = "/delete/all", produces = { MediaType.APPLICATION_XML,
-			MediaType.APPLICATION_JSON }, consumes = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public ResponseEntity<List<TruckDTO>> deleteAllTruck() {
-
-		List<TruckDTO> truckList = truckService.deleteAllTruck();
-		log.info("TruckController :: deleteAllTruck :: List<TruckDTO> : {}", truckList);
-		if (!CollectionUtils.isEmpty(truckList)) {
-			return ResponseEntity.status(HttpStatus.OK).body(truckList);
-		} else {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(truckList);
 		}
 
 	}
