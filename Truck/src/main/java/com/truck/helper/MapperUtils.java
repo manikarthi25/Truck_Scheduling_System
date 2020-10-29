@@ -11,18 +11,21 @@ public class MapperUtils {
 
 	ModelMapper modelMapper = new ModelMapper();
 
-	public TruckDTO mapToDTO(TruckEO truckEO, TruckTypeEO truckTypeEO) {
+	public TruckDTO mapToTruckDTO(TruckEO truckEO) {
 
-		TruckTypeDTO truckTypeDTO = modelMapper.map(truckTypeEO, TruckTypeDTO.class);
-		TruckDTO truckDTO = modelMapper.map(truckEO, TruckDTO.class);
-		truckDTO.setTruckTypeDTO(truckTypeDTO);
-		return truckDTO;
+		return modelMapper.map(truckEO, TruckDTO.class);
 
 	}
 
-	public TruckEO mapToEO(TruckDTO truckDTO) {
+	public TruckEO mapToTruckEO(TruckDTO truckDTO) {
 
 		return modelMapper.map(truckDTO, TruckEO.class);
+
+	}
+
+	public TruckTypeDTO mapToTruckTypeDTO(TruckTypeEO truckTypeEO) {
+
+		return modelMapper.map(truckTypeEO, TruckTypeDTO.class);
 
 	}
 

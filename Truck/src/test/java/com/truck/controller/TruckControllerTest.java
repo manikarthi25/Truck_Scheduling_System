@@ -108,7 +108,7 @@ public class TruckControllerTest {
 	}
 
 	@Test
-	public void testSearchTruckById_Ok() {
+	public void testSearchTruckById_Ok() throws TruckException {
 
 		TruckDTO truckDTO = getTruckDTO();
 
@@ -125,7 +125,7 @@ public class TruckControllerTest {
 	}
 
 	@Test
-	public void testSearchTruckById_NoContent() {
+	public void testSearchTruckById_NoContent() throws TruckException{
 
 		EasyMock.expect(mockTruckService.searchTruckById(EasyMock.anyInt())).andReturn(null);
 		EasyMock.replay(mockTruckService);

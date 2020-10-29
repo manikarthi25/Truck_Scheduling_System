@@ -53,13 +53,16 @@ public class TruckServiceTest {
 		TruckDTO truckDTO = getTruckDTO();
 		MapperUtils mapperUtils = new MapperUtils();
 
-		TruckEO truckEO = mapperUtils.mapToEO(truckDTO);
+		TruckEO truckEO = mapperUtils.mapToTruckEO(truckDTO);
 		TruckTypeEO truckTypeEO = new TruckTypeEO();
 		truckTypeEO.setTruckTypeId(1);
 		truckTypeEO.setTruckTypeName("straight_truck");
 		truckEO.setTruckTypeEO(truckTypeEO);
-
+		
+		List<TruckEO> truckEOList = new ArrayList<>();
+		
 		EasyMock.expect(mockTruckRepo.save(truckEO)).andReturn(truckEO).times(1);
+		EasyMock.expect(mockTruckRepo.findByTruckNumber(Long.valueOf(111))).andReturn(truckEOList);
 		EasyMock.replay(mockTruckRepo);
 
 		List<TruckTypeEO> truckTypeEOList = new ArrayList<>();
@@ -67,7 +70,7 @@ public class TruckServiceTest {
 
 		EasyMock.expect(mockTruckTypeRepo.findAll()).andReturn(truckTypeEOList);
 		EasyMock.replay(mockTruckTypeRepo);
-
+		
 		TruckDTO actualResult = truckService.addTruck(truckDTO);
 
 		Assert.assertEquals(truckDTO, actualResult);
@@ -83,13 +86,17 @@ public class TruckServiceTest {
 		TruckDTO truckDTO = getTruckDTO();
 		MapperUtils mapperUtils = new MapperUtils();
 
-		TruckEO truckEO = mapperUtils.mapToEO(truckDTO);
+		TruckEO truckEO = mapperUtils.mapToTruckEO(truckDTO);
 		TruckTypeEO truckTypeEO = new TruckTypeEO();
 		truckTypeEO.setTruckTypeId(1);
 		truckTypeEO.setTruckTypeName("abc");
 		truckEO.setTruckTypeEO(truckTypeEO);
-
+		
+		List<TruckEO> truckEOList = new ArrayList<>();
+		truckEOList.add(truckEO);
+		
 		EasyMock.expect(mockTruckRepo.save(truckEO)).andReturn(truckEO).times(1);
+		EasyMock.expect(mockTruckRepo.findByTruckNumber(Long.valueOf(111))).andReturn(truckEOList);
 		EasyMock.replay(mockTruckRepo);
 
 		List<TruckTypeEO> truckTypeEOList = new ArrayList<>();
@@ -108,7 +115,7 @@ public class TruckServiceTest {
 		TruckDTO truckDTO = getTruckDTO();
 		MapperUtils mapperUtils = new MapperUtils();
 
-		TruckEO truckEO = mapperUtils.mapToEO(truckDTO);
+		TruckEO truckEO = mapperUtils.mapToTruckEO(truckDTO);
 		TruckTypeEO truckTypeEO = new TruckTypeEO();
 		truckTypeEO.setTruckTypeId(1);
 		truckTypeEO.setTruckTypeName("straight_truck");
@@ -138,13 +145,13 @@ public class TruckServiceTest {
 	}
 
 	@Test
-	public void testSearchTruckById() {
+	public void testSearchTruckById() throws TruckException {
 
 		TruckDTO truckDTO = getTruckDTO();
 
 		MapperUtils mapperUtils = new MapperUtils();
 
-		TruckEO truckEO = mapperUtils.mapToEO(truckDTO);
+		TruckEO truckEO = mapperUtils.mapToTruckEO(truckDTO);
 		TruckTypeEO truckTypeEO = new TruckTypeEO();
 		truckTypeEO.setTruckTypeId(1);
 		truckTypeEO.setTruckTypeName("straight_truck");

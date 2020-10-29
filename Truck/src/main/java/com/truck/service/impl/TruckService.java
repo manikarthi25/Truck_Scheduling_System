@@ -38,11 +38,11 @@ public class TruckService implements ITruckService {
 	@Override
 	public TruckDTO addTruck(TruckDTO truckDTO) throws TruckException {
 		List<TruckEO> truckEOList = truckRepo.findByTruckNumber(truckDTO.getTruckNumber());
-		log.info("TruckService :: addTruck :: truckNUmber : {}, findByTruckNumber : {}", truckDTO.getTruckNumber(),
+		log.info("TruckService :: addTruck :: truckNumber : {}, findByTruckNumber : {}", truckDTO.getTruckNumber(),
 				truckEOList);
 		if (CollectionUtils.isEmpty(truckEOList)) {
 			try {
-				TruckEO truckEO = mapperUtils.mapToEO(truckDTO);
+				TruckEO truckEO = mapperUtils.mapToTruckEO(truckDTO);
 				TruckTypeEO truckTypeEO = new TruckTypeEO();
 				String truckName = truckDTO.getTruckTypeDTO().getTruckTypeName().toLowerCase();
 				Integer truckTypeId = getTruckTypeId(truckTypeRepo.findAll(), truckName);
@@ -55,7 +55,9 @@ public class TruckService implements ITruckService {
 					throw new TruckException(ErrorCode.TRUCK_TYPE_ERROR, ErrorMessage.TRUCK_TYPE_FAILED);
 				}
 				truckEO = truckRepo.save(truckEO);
-				return mapperUtils.mapToDTO(truckEO, truckEO.getTruckTypeEO());
+				TruckDTO responseTruckDTO = mapperUtils.mapToTruckDTO(truckEO);
+				responseTruckDTO.setTruckTypeDTO(mapperUtils.mapToTruckTypeDTO(truckEO.getTruckTypeEO()));
+				return responseTruckDTO;
 
 			} catch (Exception ex) {
 				log.debug("TruckService : addtruck : truck :{} Exception : {}", truckDTO, ex);
@@ -74,26 +76,38 @@ public class TruckService implements ITruckService {
 			Optional<TruckTypeEO> optionalTruckTypeEO = truckTypeRepo
 					.findById(truckEO.getTruckTypeEO().getTruckTypeId());
 			if (optionalTruckTypeEO.isPresent()) {
-				truckList.add(mapperUtils.mapToDTO(truckEO, optionalTruckTypeEO.get()));
+				TruckDTO responseTruckDTO = mapperUtils.mapToTruckDTO(truckEO);
+				responseTruckDTO.setTruckTypeDTO(mapperUtils.mapToTruckTypeDTO(optionalTruckTypeEO.get()));
+				truckList.add(responseTruckDTO);
 			}
 		}
 		return truckList;
 	}
 
 	@Override
-	public TruckDTO searchTruckById(Integer truckId) {
-		return getTruck(truckRepo.findById(truckId));
+	public TruckDTO searchTruckById(Integer truckId) throws TruckException {
+		
+		//Java 1.8 Features
+		return truckRepo.findById(truckId).map(truck -> {
+			return getTruck(Optional.of(truck));
+		}).orElseThrow(() -> new TruckException(ErrorCode.TRUCK_NUMBER_ERROR, ErrorMessage.TRUCK_NUMBER_FAILED));
 	}
 
 	@Override
 	public TruckDTO updateTruck(TruckDTO truckDTO) throws TruckException {
 
 		try {
+			//Java 1.8 Features
 			Optional<TruckEO> truckOptionalEO = truckRepo.findById(truckDTO.getTruckId());
 			if (truckOptionalEO.isPresent()) {
 				TruckEO truckEO = getTruckEO(truckDTO);
 				truckEO = truckRepo.saveAndFlush(truckEO);
-				return mapperUtils.mapToDTO(truckEO, truckEO.getTruckTypeEO());
+				
+				truckEO = truckRepo.save(truckEO);
+				TruckDTO responseTruckDTO = mapperUtils.mapToTruckDTO(truckEO);
+				responseTruckDTO.setTruckTypeDTO(mapperUtils.mapToTruckTypeDTO(truckEO.getTruckTypeEO()));
+				return responseTruckDTO;
+
 			} else {
 				return null;
 			}
@@ -131,14 +145,15 @@ public class TruckService implements ITruckService {
 			TruckEO truckEO = truckOptionalEO.get();
 			Optional<TruckTypeEO> truckTypeEO = truckTypeRepo.findById(truckEO.getTruckTypeEO().getTruckTypeId());
 			if (truckTypeEO.isPresent()) {
-				truckDTO = mapperUtils.mapToDTO(truckEO, truckTypeEO.get());
+				truckDTO = mapperUtils.mapToTruckDTO(truckEO);
+				truckDTO.setTruckTypeDTO(mapperUtils.mapToTruckTypeDTO(truckTypeEO.get()));
 			}
 		}
 		return truckDTO;
 	}
 
 	private TruckEO getTruckEO(TruckDTO truckDTO) throws TruckException {
-		TruckEO truckEO = mapperUtils.mapToEO(truckDTO);
+		TruckEO truckEO = mapperUtils.mapToTruckEO(truckDTO);
 		TruckTypeEO truckTypeEO = new TruckTypeEO();
 		String truckName = truckDTO.getTruckTypeDTO().getTruckTypeName().toLowerCase();
 		Integer truckTypeId = getTruckTypeId(truckTypeRepo.findAll(), truckName);

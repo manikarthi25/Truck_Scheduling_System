@@ -62,7 +62,7 @@ public class TruckController {
 
 	@GetMapping(path = "/search/{truckId}", produces = { MediaType.APPLICATION_XML,
 			MediaType.APPLICATION_JSON }, consumes = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public ResponseEntity<TruckDTO> searchTruckById(@PathVariable("truckId") Integer truckId) {
+	public ResponseEntity<TruckDTO> searchTruckById(@PathVariable("truckId") Integer truckId) throws TruckException {
 
 		TruckDTO truck = truckService.searchTruckById(truckId);
 		log.info("TruckController :: searchTruckById :: TruckDTO : {}", truck);
