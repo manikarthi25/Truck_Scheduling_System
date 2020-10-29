@@ -103,7 +103,6 @@ public class TruckService implements ITruckService {
 				TruckEO truckEO = getTruckEO(truckDTO);
 				truckEO = truckRepo.saveAndFlush(truckEO);
 				
-				truckEO = truckRepo.save(truckEO);
 				TruckDTO responseTruckDTO = mapperUtils.mapToTruckDTO(truckEO);
 				responseTruckDTO.setTruckTypeDTO(mapperUtils.mapToTruckTypeDTO(truckEO.getTruckTypeEO()));
 				return responseTruckDTO;

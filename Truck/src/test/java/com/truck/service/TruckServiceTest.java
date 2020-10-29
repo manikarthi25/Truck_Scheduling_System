@@ -175,6 +175,73 @@ public class TruckServiceTest {
 		EasyMock.verify(mockTruckTypeRepo);
 
 	}
+	
+	@Test
+	public void testDeleteTruckById() {
+		
+		TruckDTO truckDTO = getTruckDTO();
+
+		MapperUtils mapperUtils = new MapperUtils();
+		TruckEO truckEO = mapperUtils.mapToTruckEO(truckDTO);
+		TruckTypeEO truckTypeEO = new TruckTypeEO();
+		truckTypeEO.setTruckTypeId(1);
+		truckTypeEO.setTruckTypeName("straight_truck");
+		truckEO.setTruckTypeEO(truckTypeEO);
+
+		Optional<TruckEO> optionalTruckEO = Optional.of(truckEO);
+
+		EasyMock.expect(mockTruckRepo.findById(EasyMock.anyInt())).andReturn(optionalTruckEO).times(1);
+		mockTruckRepo.deleteById(1);
+		EasyMock.expectLastCall();
+		EasyMock.replay(mockTruckRepo);
+
+		Optional<TruckTypeEO> optionalTruckTypeEO = Optional.of(truckTypeEO);
+
+		EasyMock.expect(mockTruckTypeRepo.findById(1)).andReturn(optionalTruckTypeEO);
+		EasyMock.replay(mockTruckTypeRepo);
+		
+		TruckDTO actualResult = truckService.deleteTruckById(1);
+
+		Assert.assertEquals(truckDTO, actualResult);
+
+		EasyMock.verify(mockTruckRepo);
+		EasyMock.verify(mockTruckTypeRepo);
+		
+	}
+	
+	@Test
+	public void testUpdateTruck_Should_Update_Truck() throws TruckException {
+
+		TruckDTO truckDTO = getTruckDTO();
+
+		MapperUtils mapperUtils = new MapperUtils();
+		TruckEO truckEO = mapperUtils.mapToTruckEO(truckDTO);
+		TruckTypeEO truckTypeEO = new TruckTypeEO();
+		truckTypeEO.setTruckTypeId(1);
+		truckTypeEO.setTruckTypeName("straight_truck");
+		truckEO.setTruckTypeEO(truckTypeEO);
+
+		Optional<TruckEO> optionalTruckEO = Optional.of(truckEO);
+		List<TruckEO> truckEOList = new ArrayList<>();
+		truckEOList.add(truckEO);
+		
+		List<TruckTypeEO> truckTypeEOList = new ArrayList<>();
+		truckTypeEOList.add(truckEO.getTruckTypeEO());
+
+		EasyMock.expect(mockTruckRepo.findById(EasyMock.anyInt())).andReturn(optionalTruckEO).times(1);
+		EasyMock.expect(mockTruckTypeRepo.findAll()).andReturn(truckTypeEOList);
+		EasyMock.replay(mockTruckTypeRepo);
+		EasyMock.expect(mockTruckRepo.saveAndFlush(truckEO)).andReturn(truckEO).times(1);
+		EasyMock.replay(mockTruckRepo);
+		
+		TruckDTO actualResult = truckService.updateTruck(truckDTO);
+
+		Assert.assertEquals(truckDTO, actualResult);
+
+		EasyMock.verify(mockTruckRepo);
+		EasyMock.verify(mockTruckTypeRepo);
+
+	}
 
 	private TruckDTO getTruckDTO() {
 
